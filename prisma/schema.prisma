@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Categories {
+  id            String      @id @default(uuid())
+  category_name String      @db.VarChar(200)
+  description   String      @db.Text
+  medicines     Medicines[]
+
+  @@index([category_name])
+  @@map("categories")
+}
+
+model Medicines {
+  id            String     @id @default(uuid())
+  medicine_name String     @db.VarChar(200)
+  category_id   String
+  categories    Categories @relation(fields: [category_id], references: [id])
+  seller_id     String
+  price         Int        @default(0)
+  stock         Int        @default(0)
+  description   String     @db.Text
+  expiry_date   DateTime
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  orders        Orders[]
+  reviews       Reviews[]
+
+  @@index([seller_id])
+  @@index([category_id])
+  @@map("medicines")
+}
+
+model Orders {
+  id           String      @id @default(uuid())
+  customer_id  String
+  medicine_id  String
+  medicines    Medicines   @relation(fields: [medicine_id], references: [id])
+  quantity     Int         @default(0)
+  total_price  Int         @default(0)
+  order_status OrderStatus @default(PROCESSING)
+  order_date   DateTime    @default(now())
+
+  @@index([customer_id])
+  @@index([medicine_id])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Reviews {
+  id          String    @id @default(uuid())
+  customer_id String
+  medicine_id String
+  medicines   Medicines @relation(fields: [medicine_id], references: [id])
+  parent_id   String?
+  parent      Reviews?  @relation("ReviewsReplies", fields: [parent_id], references: [id])
+  replies     Reviews[] @relation("ReviewsReplies")
+  comment     String    @db.Text
+  review_date DateTime  @default(now())
+
+  @@index([customer_id])
+  @@index([medicine_id])
+  @@map("reviews")
+}
