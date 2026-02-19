@@ -5,7 +5,7 @@ import auth, { UserRole } from '../../middleware/auth';
 
 const router=Router();
 
-
+router.get("/",medicineController.getAllMedicine)
 
 router.post("/createmedicine",auth(UserRole.SELLER),medicineController.createMedicine)
 

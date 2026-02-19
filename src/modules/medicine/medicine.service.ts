@@ -12,6 +12,12 @@ const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_a
   return result;
 }
 
+const getAllMedicine=async()=>{
+  const result=await prisma.medicines.findMany();
+  return result;
+}
+
 export const medicineService={
-  createMedicine
+  createMedicine,
+  getAllMedicine
 }
