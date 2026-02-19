@@ -11,7 +11,7 @@ const createMedicine=async (req:Request,res:Response)=>{
     })
     }
       const result=await medicineService.createMedicine(req.body,user.id as string)
-      res.status(200).json(result)
+      res.status(201).json(result)
    }catch(err){
     res.status(400).json({
       error:"medicine creation failed",

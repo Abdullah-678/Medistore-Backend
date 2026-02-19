@@ -9,6 +9,12 @@ const createcategory=async (data:Categories)=>{
   return result;
 }
 
+const getAllCategory=async()=>{
+  const result=await prisma.categories.findMany();
+  return result;
+}
+
 export const categoryService={
-  createcategory
+  createcategory,
+  getAllCategory
 }
