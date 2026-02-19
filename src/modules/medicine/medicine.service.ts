@@ -17,7 +17,17 @@ const getAllMedicine=async()=>{
   return result;
 }
 
+const getMedicineById=async(medicineid:string)=>{
+const result=await prisma.medicines.findUnique({
+  where:{
+    id:medicineid
+  }
+});
+return result;
+}
+
 export const medicineService={
   createMedicine,
-  getAllMedicine
+  getAllMedicine,
+  getMedicineById
 }
