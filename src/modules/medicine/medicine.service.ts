@@ -1,10 +1,13 @@
 import { Medicines } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
-const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_at' > )=>{
+const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_at' | 'seller_id' >,userId :string )=>{
   // console.log(data)
   const result=await prisma.medicines.create({
-   data
+   data:{
+    ...data,
+    seller_id:userId
+   }
   })
   return result;
 }

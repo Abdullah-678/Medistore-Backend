@@ -92,7 +92,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role    Role   @default(USER)
+  role    Role   @default(CUSTOMER)
   address String
 
   @@unique([email])
@@ -100,7 +100,7 @@ model User {
 }
 
 enum Role {
-  USER
+  CUSTOMER
   SELLER
   ADMIN
 }
