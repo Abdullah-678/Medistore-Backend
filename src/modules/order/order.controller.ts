@@ -4,9 +4,9 @@ import { orderService } from "./order.service"
 const createOrder=async (req:Request,res:Response)=>{
   // console.log(req.body)
    try{
-    
-   
-      const result=await orderService.createOrder(req.body );
+    const user=req.user;
+
+      const result=await orderService.createOrder(req.body,user?.id as string );
       res.status(201).json(result)
    }catch(err){
     res.status(400).json({
@@ -30,6 +30,7 @@ const getAllOrder=async(req:Request,res:Response)=>{
 
 const getOrderById=async(req:Request,res:Response)=>{
 try{
+  
   const {orderId}=req.params;
   
  if(!orderId){

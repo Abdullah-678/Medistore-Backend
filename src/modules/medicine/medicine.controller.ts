@@ -38,7 +38,9 @@ res.status(200).json(result)
 
 const getAllMedicine=async(req:Request,res:Response)=>{
   try{
-   const result=await medicineService.getAllMedicine();
+    const {search}=req.query;
+   const searchString=typeof search==='string'?search:undefined;
+   const result=await medicineService.getAllMedicine({search:searchString});
    res.status(200).json(result);
   }catch(err){
         res.status(400).json({
@@ -48,9 +50,40 @@ const getAllMedicine=async(req:Request,res:Response)=>{
   }
 }
 
+const deleteMedicine=async(req:Request,res:Response)=>{
+  try{
+    
+  const {medicineid}=req.params;
+  const user=req.user;
+   const result=await medicineService.deleteMedicine(medicineid as string,user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"medicine delete failed",
+      details:err
+    })
+  }
+}
+const updateMedicine=async(req:Request,res:Response)=>{
+  try{
+    
+  const {medicineid}=req.params;
+  const user=req.user;
+   const result=await medicineService.updateMedicine(medicineid as string,req.body,user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"medicine update failed",
+      details:err
+    })
+  }
+}
+
 
 export const medicineController={
   createMedicine,
   getAllMedicine,
-  getMedicineById
+  getMedicineById,
+  deleteMedicine,
+  updateMedicine
 }

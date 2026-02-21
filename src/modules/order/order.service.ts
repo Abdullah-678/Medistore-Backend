@@ -16,10 +16,13 @@ const result=await prisma.orders.findUnique({
 return result;
 }
 
-const createOrder=async (data:Omit<Orders,'id'  >)=>{
+const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
   // console.log(data)
   const result=await prisma.orders.create({
-    data
+    data:{
+      ...data,
+      customer_id:userId
+    }
   })
   return result;
 }

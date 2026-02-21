@@ -12,8 +12,34 @@ const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_a
   return result;
 }
 
-const getAllMedicine=async()=>{
-  const result=await prisma.medicines.findMany();
+const getAllMedicine=async(payload:{search?:string |undefined})=>{
+  const andConditions=[]
+ if(payload.search){
+  andConditions.push(
+     { 
+     OR:[
+    { price:{
+   equals:Number(payload.search)
+   }},
+  
+   ]
+  }, )
+ }
+  const result=await prisma.medicines.findMany({
+    where:{
+  AND:[
+ 
+    {
+      categories:{
+    category_name:{
+      contains:payload.search as string,
+      mode:"insensitive"
+    }
+   }
+  }
+  ]
+    }
+  });
   return result;
 }
 
@@ -26,8 +52,56 @@ const result=await prisma.medicines.findUnique({
 return result;
 }
 
+const deleteMedicine=async(medicineid :string,userId:string)=>{
+const medicineData=await prisma.medicines.findFirst({
+  where:{
+    id:medicineid,
+    seller_id:userId
+  },
+  select:{
+    id:true
+  }
+})
+if(!medicineData){
+  throw new Error("your provided input is invalid")
+}
+
+const result=await prisma.medicines.delete({
+  where:{
+    id:medicineData.id
+  }
+})
+return result;
+
+}
+
+const updateMedicine=async(medicineid:string,data:{price?:number,stock?:number},userId:string)=>{
+const medicineData=await prisma.medicines.findFirst({
+  where:{
+    id:medicineid,
+    seller_id:userId
+  },
+  select:{
+    id:true
+  }
+})
+if(!medicineData){
+  throw new Error("your provided input is invalid")
+}
+const result=await prisma.medicines.update({
+  where:{
+    id:medicineid,
+    seller_id:userId
+  },
+  data
+})
+return result;
+}
+
 export const medicineService={
   createMedicine,
   getAllMedicine,
-  getMedicineById
+  getMedicineById,
+  deleteMedicine,
+  updateMedicine
 }

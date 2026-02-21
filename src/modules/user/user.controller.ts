@@ -20,6 +20,20 @@ res.status(200).json(result)
    }
 }
 
+
+const getAllUser=async(req:Request,res:Response)=>{
+ try{
+   const result=await userService.getAllUser();
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"get all users are  failed",
+      details:err
+    })
+  }
+}
+
 export const userController={
-  getCurrentUser
+  getCurrentUser,
+  getAllUser
 }
