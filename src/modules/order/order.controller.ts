@@ -46,9 +46,26 @@ res.status(200).json(result)
    }
 }
 
+const updateOrderStatus=async(req:Request,res:Response)=>{
+  try{
+    
+  const {orderId}=req.params;
+  const user=req.user;
+const {order_status}=req.body;
+   const result=await orderService.updateOrderStatus(orderId as string,order_status,user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"orderstatus update failed",
+      details:err
+    })
+  }
+}
+
 
 export const orderController={
   createOrder,
   getAllOrder,
-  getOrderById
+  getOrderById,
+  updateOrderStatus
 }

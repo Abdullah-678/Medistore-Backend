@@ -1,4 +1,4 @@
-import { Orders } from "../../../generated/prisma/client";
+import { Orders, OrderStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 
@@ -27,8 +27,37 @@ const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
   return result;
 }
 
+const updateOrderStatus=async(orderId:string,order_status:OrderStatus,userId:string)=>{
+ 
+  const orderData=await prisma.orders.findFirst({
+  where:{
+    id:orderId,
+    medicines:{
+      seller_id:userId
+    }
+  },
+  select:{
+    id:true
+  }
+})
+if(!orderData){
+  throw new Error("your provided input is invalid")
+}
+
+const result=await prisma.orders.update({
+  where:{
+    id:orderId,
+
+  },
+  data:{order_status}
+})
+return result;
+
+}
+
 export const orderService={
   createOrder,
   getAllOrder,
-  getOrderById
+  getOrderById,
+  updateOrderStatus
 }
