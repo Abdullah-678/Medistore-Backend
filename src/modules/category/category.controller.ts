@@ -28,7 +28,39 @@ const getAllCategory=async(req:Request,res:Response)=>{
    }
 }
 
+const updateCategory=async(req:Request,res:Response)=>{
+  try{
+    
+  const {categoryId}=req.params;
+ 
+   const result=await categoryService.updateCategory(categoryId as string,req.body)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"category update failed",
+      details:err
+    })
+  }
+}
+
+const deleteCategory=async(req:Request,res:Response)=>{
+  try{
+    
+  const {categoryId}=req.params;
+  
+   const result=await categoryService.deleteCategory(categoryId as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"category delete failed",
+      details:err
+    })
+  }
+}
+
 export const categoryController={
   createcategory,
-  getAllCategory
+  getAllCategory,
+  deleteCategory,
+  updateCategory
 }
