@@ -27,6 +27,18 @@ const getAllOrder=async(req:Request,res:Response)=>{
     })
   }
 }
+const getIncomingOrders=async(req:Request,res:Response)=>{
+ try{
+  const user=req.user;
+   const result=await orderService.getIncomingOrders(user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"get incoming orders are  failed",
+      details:err
+    })
+  }
+}
 
 const getOrderById=async(req:Request,res:Response)=>{
 try{
@@ -67,5 +79,6 @@ export const orderController={
   createOrder,
   getAllOrder,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+  getIncomingOrders
 }

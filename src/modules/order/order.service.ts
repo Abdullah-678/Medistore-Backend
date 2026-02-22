@@ -6,6 +6,17 @@ const getAllOrder=async()=>{
   const result=await prisma.orders.findMany();
   return result;
 }
+const getIncomingOrders=async(userId:string)=>{
+
+  const result=await prisma.orders.findMany({
+    where:{
+      medicines:{
+        seller_id:userId
+      }
+    }
+  });
+  return result;
+}
 
 const getOrderById=async(orderId:string)=>{
 const result=await prisma.orders.findUnique({
@@ -15,6 +26,7 @@ const result=await prisma.orders.findUnique({
 });
 return result;
 }
+
 
 const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
   // console.log(data)
@@ -59,5 +71,6 @@ export const orderService={
   createOrder,
   getAllOrder,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+  getIncomingOrders
 }
