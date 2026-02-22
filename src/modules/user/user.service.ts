@@ -15,7 +15,34 @@ const getAllUser=async()=>{
   return result;
 }
 
+const updateMyProfile=async(userId:string,data:{name?:string,email?:string,image?:string,address?:string},userid:string)=>{
+  if(userId!=userid){
+    throw new Error("you are not allowed!")
+  }
+const userData=await prisma.user.findFirst({
+  where:{
+    id:userId,
+    
+  },
+  select:{
+    id:true
+  }
+})
+if(!userData){
+  throw new Error("your provided input is invalid")
+}
+const result=await prisma.user.update({
+  where:{
+    id:userId,
+    
+  },
+  data
+})
+return result;
+}
+
 export const userService={
   getCurrentUser,
-  getAllUser
+  getAllUser,
+  updateMyProfile
 }

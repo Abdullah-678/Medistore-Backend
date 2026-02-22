@@ -33,7 +33,24 @@ const getAllUser=async(req:Request,res:Response)=>{
   }
 }
 
+const updateMyProfile=async(req:Request,res:Response)=>{
+  try{
+    
+  const {userId}=req.params;
+  
+  const user=req.user;
+   const result=await userService.updateMyProfile(userId as string,req.body,user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"my profile update failed",
+      details:err
+    })
+  }
+}
+
 export const userController={
   getCurrentUser,
-  getAllUser
+  getAllUser,
+  updateMyProfile
 }
