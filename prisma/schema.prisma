@@ -37,6 +37,7 @@ model Medicines {
   updated_at    DateTime   @updatedAt
   orders        Orders[]
   reviews       Reviews[]
+  carts         Cart[]
 
   @@index([seller_id])
   @@index([category_id])
@@ -65,6 +66,23 @@ enum OrderStatus {
   CANCELLED
 }
 
+model Cart {
+  id          String @id @default(uuid())
+  user_id     String
+  medicine_id String
+
+  user     User      @relation(fields: [user_id], references: [id])
+  medicine Medicines @relation(fields: [medicine_id], references: [id])
+
+  quantity   Int      @default(1)
+  created_at DateTime @default(now())
+
+  @@unique([user_id, medicine_id])
+  @@index([user_id])
+  @@index([medicine_id])
+  @@map("carts")
+}
+
 model Reviews {
   id          String    @id @default(uuid())
   customer_id String
@@ -82,18 +100,19 @@ model Reviews {
 }
 
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean    @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   sessions      Session[]
   accounts      Account[]
-
-  role    Role   @default(CUSTOMER)
-  address String
+  role          Role       @default(CUSTOMER)
+  status        UserStatus @default(ACTIVE)
+  address       String
+  carts         Cart[]
 
   @@unique([email])
   @@map("user")
@@ -103,6 +122,11 @@ enum Role {
   CUSTOMER
   SELLER
   ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
 }
 
 model Session {

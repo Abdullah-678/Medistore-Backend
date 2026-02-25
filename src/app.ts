@@ -6,6 +6,7 @@ import { auth } from "./lib/auth";
 import cors from 'cors';
 import { userRoute } from "./modules/user/user.route";
 import { orderRoute } from "./modules/order/order.route";
+import { cartRouter } from "./modules/cart/cart.route";
 const app:Application = express();
 
 app.use(cors({
@@ -21,6 +22,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use("/api/medicines",medicineRouter)
 app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRoute)
+app.use("/api/carts",cartRouter)
 app.get("/",(req,res)=>{
   res.send("hello world!")
 });

@@ -4,6 +4,9 @@ CREATE TYPE "OrderStatus" AS ENUM ('PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCEL
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('CUSTOMER', 'SELLER', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'BANNED');
+
 -- CreateTable
 CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
@@ -43,6 +46,17 @@ CREATE TABLE "orders" (
 );
 
 -- CreateTable
+CREATE TABLE "carts" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "medicine_id" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "carts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "reviews" (
     "id" TEXT NOT NULL,
     "customer_id" TEXT NOT NULL,
@@ -64,6 +78,7 @@ CREATE TABLE "user" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'CUSTOMER',
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
     "address" TEXT NOT NULL,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
@@ -130,6 +145,15 @@ CREATE INDEX "orders_customer_id_idx" ON "orders"("customer_id");
 CREATE INDEX "orders_medicine_id_idx" ON "orders"("medicine_id");
 
 -- CreateIndex
+CREATE INDEX "carts_user_id_idx" ON "carts"("user_id");
+
+-- CreateIndex
+CREATE INDEX "carts_medicine_id_idx" ON "carts"("medicine_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "carts_user_id_medicine_id_key" ON "carts"("user_id", "medicine_id");
+
+-- CreateIndex
 CREATE INDEX "reviews_customer_id_idx" ON "reviews"("customer_id");
 
 -- CreateIndex
@@ -155,6 +179,12 @@ ALTER TABLE "medicines" ADD CONSTRAINT "medicines_category_id_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "orders" ADD CONSTRAINT "orders_medicine_id_fkey" FOREIGN KEY ("medicine_id") REFERENCES "medicines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "carts" ADD CONSTRAINT "carts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "carts" ADD CONSTRAINT "carts_medicine_id_fkey" FOREIGN KEY ("medicine_id") REFERENCES "medicines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_medicine_id_fkey" FOREIGN KEY ("medicine_id") REFERENCES "medicines"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
