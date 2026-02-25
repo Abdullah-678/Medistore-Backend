@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
+import { UserStatus } from "../../../generated/prisma/enums";
 
 const getCurrentUser=async(req:Request,res:Response)=>{
 try{
@@ -48,9 +49,26 @@ const updateMyProfile=async(req:Request,res:Response)=>{
     })
   }
 }
+const updateBanUnban=async(req:Request,res:Response)=>{
+  try{
+    
+  const {userId}=req.params;
+  const {status}=req.body;
+  const user=req.user;
+ 
+   const result=await userService.updateBanUnban(userId as string,status ,user?.id as string)
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"ban unban update failed",
+      details:err
+    })
+  }
+}
 
 export const userController={
   getCurrentUser,
   getAllUser,
-  updateMyProfile
+  updateMyProfile,
+  updateBanUnban
 }
