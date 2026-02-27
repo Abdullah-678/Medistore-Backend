@@ -30,10 +30,27 @@ return result;
 
 const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
   // console.log(data)
+    const medicine = await prisma.medicines.findUnique({
+    where: { id: data.medicine_id },
+    select: { price: true, stock: true }
+  });
+
+   if (!medicine) {
+    throw new Error("Medicine not found");
+  }
+
+    if (medicine.stock < data.quantity) {
+    throw new Error("Not enough stock available");
+  }
+
+    const totalPrice = medicine.price * data.quantity;
+
+
   const result=await prisma.orders.create({
     data:{
       ...data,
-      customer_id:userId
+      customer_id:userId,
+      total_price:totalPrice
     }
   })
   return result;
@@ -45,16 +62,57 @@ const updateOrderStatus=async(orderId:string,order_status:OrderStatus,userId:str
   where:{
     id:orderId,
     medicines:{
-      seller_id:userId
-    }
+      seller_id:userId,
+    
+    },
+    
   },
-  select:{
-    id:true
+  include:{
+    medicines:{
+      select:{seller_id:true}
+    }
   }
+ 
 })
 if(!orderData){
   throw new Error("your provided input is invalid")
 }
+
+const currentUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true }
+  });
+
+   if (!currentUser) {
+    throw new Error("User not found");
+  }
+
+    // CUSTOMER LOGIC
+  if (currentUser.role === "CUSTOMER") {
+
+    if (orderData.customer_id !== userId) {
+      throw new Error("You are not allowed");
+    }
+
+    if (order_status !== "CANCELLED") {
+      throw new Error("Customer can only cancel order");
+    }
+  }
+  
+
+   //  SELLER LOGIC
+  if (currentUser.role === "SELLER") {
+
+       if (orderData.medicines.seller_id !== userId) {
+      throw new Error("You are not allowed");
+    }
+
+
+    if (order_status === "CANCELLED") {
+      throw new Error("Seller cannot cancel order");
+    }
+  }
+
 
 const result=await prisma.orders.update({
   where:{

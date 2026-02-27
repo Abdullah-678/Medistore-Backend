@@ -7,6 +7,7 @@ import cors from 'cors';
 import { userRoute } from "./modules/user/user.route";
 import { orderRoute } from "./modules/order/order.route";
 import { cartRouter } from "./modules/cart/cart.route";
+import { reviewRouter } from "./modules/review/review.route";
 const app:Application = express();
 
 app.use(cors({
@@ -23,6 +24,7 @@ app.use("/api/medicines",medicineRouter)
 app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRoute)
 app.use("/api/carts",cartRouter)
+app.use("/api/reviews",reviewRouter)
 app.get("/",(req,res)=>{
   res.send("hello world!")
 });
