@@ -61,10 +61,7 @@ const updateOrderStatus=async(orderId:string,order_status:OrderStatus,userId:str
   const orderData=await prisma.orders.findFirst({
   where:{
     id:orderId,
-    medicines:{
-      seller_id:userId,
-    
-    },
+  
     
   },
   include:{
@@ -83,6 +80,7 @@ const currentUser = await prisma.user.findUnique({
     select: { role: true }
   });
 
+  // console.log(currentUser)
    if (!currentUser) {
     throw new Error("User not found");
   }

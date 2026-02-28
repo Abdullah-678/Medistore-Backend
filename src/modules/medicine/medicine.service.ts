@@ -12,33 +12,38 @@ const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_a
   return result;
 }
 
-const getAllMedicine=async(payload:{search?:string |undefined})=>{
-  const andConditions=[]
- if(payload.search){
-  andConditions.push(
-     { 
-     OR:[
-    { price:{
-   equals:Number(payload.search)
-   }},
-  
-   ]
-  }, )
- }
+const getAllMedicine=async({search}:{search?:string |undefined})=>{
+const numericSearch = Number(search);
   const result=await prisma.medicines.findMany({
-    where:{
-  AND:[
- 
-    {
-      categories:{
+  where:{
+   OR:[
+    { 
+      medicine_name:{
+      contains:search as string,
+      mode:"insensitive"
+    }
+  },
+   {
+    categories:{
     category_name:{
-      contains:payload.search as string,
+      contains:search as string,
       mode:"insensitive"
     }
    }
+  },
+ ...(!isNaN(numericSearch)
+        ? [
+            {
+              price: {
+                equals: numericSearch
+              }
+            }
+          ]
+        : [])
+   ]
+
+   
   }
-  ]
-    }
   });
   return result;
 }

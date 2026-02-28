@@ -7,5 +7,5 @@ router.get("/",auth(UserRole.ADMIN),orderController.getAllOrder)
 router.get("/seller",auth(UserRole.SELLER),orderController.getIncomingOrders)
 router.get("/:orderId",orderController.getOrderById)
 router.post("/createorder",auth(UserRole.CUSTOMER),orderController.createOrder)
-router.patch("/:orderId",auth(UserRole.SELLER),orderController.updateOrderStatus)
+router.patch("/:orderId",auth(UserRole.SELLER,UserRole.CUSTOMER),orderController.updateOrderStatus)
 export const orderRoute=router;
