@@ -12,9 +12,21 @@ const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_a
   return result;
 }
 
-const getAllMedicine=async({search}:{search?:string |undefined})=>{
+const getAllMedicine=async({
+  search,
+  page,
+  limit,
+  skip
+}
+  :{search?:string |undefined,
+    page:number,
+    limit:number,
+    skip:number
+  })=>{
 const numericSearch = Number(search);
   const result=await prisma.medicines.findMany({
+    take:limit,
+    skip,
   where:{
    OR:[
     { 
