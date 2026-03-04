@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { reviewService } from "./review.service";
 
 
@@ -19,7 +19,7 @@ res.status(200).json(result)
    }
 }
 
-const createReview=async (req:Request,res:Response)=>{
+const createReview=async (req:Request,res:Response,next:NextFunction)=>{
   // console.log(req.body)
    try{
     const user=req.user;
@@ -32,10 +32,7 @@ const createReview=async (req:Request,res:Response)=>{
       const result=await reviewService.createReview(req.body)
       res.status(201).json(result)
    }catch(err){
-    res.status(400).json({
-      error:"review creation failed",
-      details:err
-    })
+   next(err)
    }
 }
 

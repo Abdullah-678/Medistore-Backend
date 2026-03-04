@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { medicineService } from "./medicine.service";
 
-const createMedicine=async (req:Request,res:Response)=>{
+const createMedicine=async (req:Request,res:Response,next:NextFunction)=>{
   // console.log(req.body)
    try{
     const user=req.user;
@@ -13,14 +13,11 @@ const createMedicine=async (req:Request,res:Response)=>{
       const result=await medicineService.createMedicine(req.body,user.id as string)
       res.status(201).json(result)
    }catch(err){
-    res.status(400).json({
-      error:"medicine creation failed",
-      details:err
-    })
+ next(err)
    }
 }
 
-const getMedicineById=async(req:Request,res:Response)=>{
+const getMedicineById=async(req:Request,res:Response,next:NextFunction)=>{
 try{
   const {medicineid}=req.params;
  if(!medicineid){
@@ -29,10 +26,7 @@ try{
 const result=await medicineService.getMedicineById(medicineid as string);
 res.status(200).json(result)
 }catch(err){
-    res.status(400).json({
-      error:"get  medicine by id failed",
-      details:err
-    })
+   next(err)
    }
 }
 

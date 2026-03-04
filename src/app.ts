@@ -8,6 +8,8 @@ import { userRoute } from "./modules/user/user.route";
 import { orderRoute } from "./modules/order/order.route";
 import { cartRouter } from "./modules/cart/cart.route";
 import { reviewRouter } from "./modules/review/review.route";
+import errorHandler from "./middleware/globalErrorHandler";
+import { notFound } from "./middleware/notFound";
 const app:Application = express();
 
 app.use(cors({
@@ -25,6 +27,8 @@ app.use("/api/categories",categoryRouter)
 app.use("/api/orders",orderRoute)
 app.use("/api/carts",cartRouter)
 app.use("/api/reviews",reviewRouter)
+app.use(notFound)
+app.use(errorHandler)
 app.get("/",(req,res)=>{
   res.send("hello world!")
 });

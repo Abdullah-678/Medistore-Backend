@@ -92,7 +92,7 @@ return result;
 
 }
 
-const updateMedicine=async(medicineid:string,data:{price?:number,stock?:number},userId:string)=>{
+const updateMedicine=async(medicineid:string,data:{price4:number,stock?:number},userId:string)=>{
 const medicineData=await prisma.medicines.findFirst({
   where:{
     id:medicineid,

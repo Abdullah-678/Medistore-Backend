@@ -50,7 +50,8 @@ const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
     data:{
       ...data,
       customer_id:userId,
-      total_price:totalPrice
+      total_price:totalPrice,
+      
     }
   })
   return result;

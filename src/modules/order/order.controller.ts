@@ -1,7 +1,7 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { orderService } from "./order.service"
 
-const createOrder=async (req:Request,res:Response)=>{
+const createOrder=async (req:Request,res:Response,next:NextFunction)=>{
   // console.log(req.body)
    try{
     const user=req.user;
@@ -9,10 +9,7 @@ const createOrder=async (req:Request,res:Response)=>{
       const result=await orderService.createOrder(req.body,user?.id as string );
       res.status(201).json(result)
    }catch(err){
-    res.status(400).json({
-      error:"order creation failed",
-      details:err
-    })
+   next(err)
    }
 }
 
