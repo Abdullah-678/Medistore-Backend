@@ -1,0 +1,9 @@
+model Categories {
+  id            String      @id @default(uuid())
+  category_name String      @db.VarChar(200)
+  description   String      @db.Text
+  medicines     Medicines[]
+
+  @@index([category_name])
+  @@map("categories")
+}

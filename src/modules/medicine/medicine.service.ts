@@ -1,4 +1,4 @@
-import { Medicines } from "../../../generated/prisma/client";
+import { Medicines, OrderStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createMedicine=async (data:Omit<Medicines,'id' | 'created_at' | 'updated_at' | 'seller_id' >,userId :string )=>{
@@ -58,6 +58,42 @@ const numericSearch = Number(search);
   }
   });
   return result;
+}
+
+const getStats=async()=>{
+return await prisma.$transaction(async(tx)=>{
+
+  const [totalMedicines,totalOrders,totalReviews,totalStock,totalUser,deliveredOrder]= 
+  await Promise.all([
+    await tx.medicines.count(),
+    await tx.orders.count(),
+    await tx.reviews.count(),
+    await tx.medicines.aggregate({
+      _sum:{
+        stock:true
+      }
+    }),
+    await tx.user.count(),
+    await tx.orders.count({
+      where:{
+        order_status:OrderStatus.DELIVERED
+      }
+    })
+  ])
+
+ 
+
+  return {
+    totalMedicines,
+    totalOrders,
+    totalReviews,
+    totalStock:totalStock._sum.stock,
+    totalUser,
+    deliveredOrder
+  }
+})
+
+
 }
 
 const getMedicineById=async(medicineid:string)=>{
@@ -120,5 +156,6 @@ export const medicineService={
   getAllMedicine,
   getMedicineById,
   deleteMedicine,
-  updateMedicine
+  updateMedicine,
+  getStats
 }

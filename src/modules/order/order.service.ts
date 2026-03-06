@@ -28,34 +28,52 @@ return result;
 }
 
 
-const createOrder=async (data:Omit<Orders,'id'  >,userId:string)=>{
-  // console.log(data)
-    const medicine = await prisma.medicines.findUnique({
-    where: { id: data.medicine_id },
-    select: { price: true, stock: true }
-  });
 
-   if (!medicine) {
-    throw new Error("Medicine not found");
-  }
+
+const createOrder = async (
+  data: Omit<Orders, "id">,
+  userId: string
+) => {
+
+  return await prisma.$transaction(async (tx) => {
+
+    const medicine = await tx.medicines.findUnique({
+      where: { id: data.medicine_id },
+      select: { price: true, stock: true }
+    });
+
+    if (!medicine) {
+      throw new Error("Medicine not found");
+    }
 
     if (medicine.stock < data.quantity) {
-    throw new Error("Not enough stock available");
-  }
+      throw new Error("Not enough stock available");
+    }
 
     const totalPrice = medicine.price * data.quantity;
 
+    
+    const order = await tx.orders.create({
+      data: {
+        ...data,
+        customer_id: userId,
+        total_price: totalPrice
+      }
+    });
 
-  const result=await prisma.orders.create({
-    data:{
-      ...data,
-      customer_id:userId,
-      total_price:totalPrice,
-      
-    }
-  })
-  return result;
-}
+  
+    await tx.medicines.update({
+      where: { id: data.medicine_id },
+      data: {
+        stock: {
+          decrement: data.quantity   
+        }
+      }
+    });
+
+    return order;
+  });
+};
 
 const updateOrderStatus=async(orderId:string,order_status:OrderStatus,userId:string)=>{
  

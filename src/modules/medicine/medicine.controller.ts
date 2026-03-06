@@ -46,6 +46,17 @@ const getAllMedicine=async(req:Request,res:Response)=>{
     })
   }
 }
+const getStats=async(req:Request,res:Response)=>{
+  try{
+     const result=await medicineService.getStats()
+   res.status(200).json(result);
+  }catch(err){
+        res.status(400).json({
+      error:"stats fetched failed",
+      details:err
+    })
+  }
+}
 
 const deleteMedicine=async(req:Request,res:Response)=>{
   try{
@@ -82,5 +93,6 @@ export const medicineController={
   getAllMedicine,
   getMedicineById,
   deleteMedicine,
-  updateMedicine
+  updateMedicine,
+  getStats
 }

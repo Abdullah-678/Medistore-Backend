@@ -1,0 +1,21 @@
+model Orders {
+  id           String      @id @default(uuid())
+  customer_id  String
+  medicine_id  String
+  medicines    Medicines   @relation(fields: [medicine_id], references: [id])
+  quantity     Int         @default(0)
+  total_price  Int         @default(0)
+  order_status OrderStatus @default(PROCESSING)
+  order_date   DateTime    @default(now())
+
+  @@index([customer_id])
+  @@index([medicine_id])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
